@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'src/pages/home_page.dart';
+
 void main() {
   runApp(const ChatApp());
 }
@@ -15,7 +17,7 @@ class ChatApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Container(),
+      home: const HomePage(),
     );
   }
 }
