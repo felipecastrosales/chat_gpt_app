@@ -11,39 +11,43 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final mockChatModels = [
+    ChatModel(
+      text: 'Hi, I am GPT-3, nice to meet you!',
+      isSender: false,
+    ),
+    ChatModel(text: 'What do you do?', isSender: true),
+    ChatModel(
+      text: 'I am an artificial intelligence language model',
+      isSender: false,
+    ),
+    ChatModel(text: 'Oh, cool. How are you?', isSender: true),
+    ChatModel(
+      text: 'I am fine, thanks. What about you?',
+      isSender: false,
+    ),
+    ChatModel(text: 'I am fine too, thanks.', isSender: true),
+  ];
+
+  bool isLoading = false;
+
+  void sendMessage(String message) {
+    setState(() {
+      isLoading = true;
+      mockChatModels.insert(
+        0,
+        ChatModel(text: message, isSender: true),
+      );
+    });
+    Future.delayed(const Duration(seconds: 2)).then((_) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final mockChatModels = [
-      ChatModel(
-        text: 'Hi, I am GPT-3, nice to meet you!',
-        isSender: false,
-      ),
-      ChatModel(text: 'What do you do?', isSender: true),
-      ChatModel(
-        text: 'I am an artificial intelligence language model',
-        isSender: false,
-      ),
-      ChatModel(text: 'Oh, cool. How are you?', isSender: true),
-      ChatModel(
-        text: 'I am fine, thanks. What about you?',
-        isSender: false,
-      ),
-      ChatModel(text: 'I am fine too, thanks.', isSender: true),
-    ];
-
-    bool isLoading = false;
-
-    void _sendMessage(String message) {
-      setState(() {
-        isLoading = true;
-      });
-      Future.delayed(const Duration(seconds: 2)).then((_) {
-        setState(() {
-          isLoading = false;
-        });
-      });
-    }
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -66,18 +70,18 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           ListView.builder(
-            padding: const EdgeInsets.only(bottom: 80),
             reverse: true,
-            itemCount: 10,
+            padding: const EdgeInsets.only(bottom: 80),
+            itemCount: mockChatModels.length,
             itemBuilder: (context, index) {
-              return ChatBubble(model: mockChatModels[index % 6]);
+              return ChatBubble(model: mockChatModels[index]);
             },
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: ChatField(
               sendEnabled: !isLoading,
-              onMessage: _sendMessage,
+              onMessage: sendMessage,
             ),
           ),
           if (isLoading)
