@@ -7,10 +7,7 @@
         {
             "name": "chat_gpt_app",
             "request": "launch",
-            "type": "dart",
-            "args": [
-                "--dart-define", "API_KEY=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"
-            ]
+            "type": "dart"
         },
         {
             "name": "chat_gpt_app (profile mode)",
