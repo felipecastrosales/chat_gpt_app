@@ -1,7 +1,8 @@
-import 'package:chat_gpt_app/src/models/chat_model.dart';
+import 'package:chat_gpt_app/src/atoms/chat_atom.dart';
 import 'package:chat_gpt_app/src/widgets/chat_bubble.dart';
 import 'package:chat_gpt_app/src/widgets/chat_field.dart';
 import 'package:flutter/material.dart';
+import 'package:rx_notifier/rx_notifier.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,43 +12,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final mockChatModels = [
-    ChatModel(
-      text: 'Hi, I am GPT-3, nice to meet you!',
-      isSender: false,
-    ),
-    ChatModel(text: 'What do you do?', isSender: true),
-    ChatModel(
-      text: 'I am an artificial intelligence language model',
-      isSender: false,
-    ),
-    ChatModel(text: 'Oh, cool. How are you?', isSender: true),
-    ChatModel(
-      text: 'I am fine, thanks. What about you?',
-      isSender: false,
-    ),
-    ChatModel(text: 'I am fine too, thanks.', isSender: true),
-  ];
-
-  bool isLoading = false;
-
   void sendMessage(String message) {
-    setState(() {
-      isLoading = true;
-      mockChatModels.insert(
-        0,
-        ChatModel(text: message, isSender: true),
-      );
-    });
-    Future.delayed(const Duration(seconds: 2)).then((_) {
-      setState(() {
-        isLoading = false;
-      });
-    });
+    sendMessageAction.value = message;
   }
 
   @override
   Widget build(BuildContext context) {
+    context.select(() => [chatsState.value, chatLoading.value]);
+    final chatModels = chatsState.value;
+    final isLoading = chatLoading.value;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -59,6 +33,19 @@ class _HomePageState extends State<HomePage> {
             color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+            onPressed: () {
+              sendMessageAction.value = '';
+              chatLoading.value = false;
+              chatsState.value = [];
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -72,9 +59,9 @@ class _HomePageState extends State<HomePage> {
           ListView.builder(
             reverse: true,
             padding: const EdgeInsets.only(bottom: 80),
-            itemCount: mockChatModels.length,
+            itemCount: chatModels.length,
             itemBuilder: (context, index) {
-              return ChatBubble(model: mockChatModels[index]);
+              return ChatBubble(model: chatModels[index]);
             },
           ),
           Align(

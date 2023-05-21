@@ -11,10 +11,9 @@ class ChatReducer extends RxReducer {
     on(() => [sendMessageAction.value], sendMessage);
   }
 
-  late final chatGPT = ChatGpt(apiKey: Env.chatGPTKey);
-
   void sendMessage() async {
     final message = sendMessageAction.value;
+    final chatGPT = ChatGpt(apiKey: Env.chatGPTKey);
 
     if (message.isEmpty) {
       return;
